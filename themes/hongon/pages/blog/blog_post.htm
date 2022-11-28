@@ -1,0 +1,23 @@
+url = "/b/:slug*"
+layout = "default"
+title = "Blog Post Display Page"
+meta_title = "{{ post.title }}"
+
+[section post]
+handle = "Content\Blog\Post"
+entrySlug = "{{ :slug }}"
+==
+<?php
+function onStart() {
+    $this->page->title = $this->post->title;
+    $this['isLoggedIn'] = !!BackendAuth::getUser();
+}
+?>
+==
+{% if post is empty %}
+    {% do abort(404) %}
+{% endif %}
+
+
+
+{% partial 'blog/blog_post' post=post %}

@@ -1,0 +1,74 @@
+[collection posts]
+handle = "Content\Blog\Post"
+==
+<?php
+function onStart() {
+    $this['isLoggedIn'] = !!BackendAuth::getUser();
+}
+?>
+==
+{% set posts_paginated = posts.orderBy('created_at', 'desc').paginate(5) %}
+
+{% for post in posts_paginated %}
+
+    <header class="my-header mb-2">
+        <h1>
+            <a href="/b/{{post.slug}}">{{ post.title }}</a>
+        </h1>
+        {% if isLoggedIn %}
+            <a href="/-114514/tailor/entries/content_blog_post/{{ post.id }}" target="_blank">
+                <button class="btn btn-sm btn-outline-secondary">
+                    Edit
+                </button>
+            </a>
+        {% endif %}
+    </header>
+
+    <div class="article-info-box mb-2">
+        <small class="text-muted">
+            張貼於：{{ post.created_at|date("Y-m-d H:i") }}
+        </small>
+        {% if post.created_at != post.updated_at %}
+            <small class="text-muted">
+                更新於：{{ post.updated_at|date("Y-m-d H:i") }}
+            </small>
+        {% endif %}
+    </div>
+
+    <article class="my-content">
+        {% if post.entry_type == 'richtext' %}
+
+            {{ post.content|html_limit(500, '')|raw }}
+
+        {% elseif post.entry_type == 'markdown' %}
+
+            {{ post.content|html_limit(500, '')|md }}
+
+        {% endif %}
+    </article>
+
+    {% if post.content|html_limit(500) != post.content|html_limit(500+1) %}
+        <div class="text-center">
+            <a href="/b/{{post.slug}}">
+                <button class="btn btn-sm btn-outline-dark btn-wide mb-2">
+                    查看全文
+                </button>
+            </a>
+        </div>
+    {% endif %}
+
+    {% if post.categories|length > 0 %}
+        <div class="article-info-box mb-2">
+            {% partial 'blog/blog_categories' post=post %}
+        </div>
+    {% endif %}
+
+{% endfor %}
+
+<!-- Pagination -->
+{% if posts_paginated.render|length %}
+    <hr class="my-2" />
+{% endif %}
+<nav class="d-flex justify-content-end">
+    {{ posts_paginated.render|replace({"pagination": "pagination mb-0"})|raw }}
+</nav>

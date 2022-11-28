@@ -1,0 +1,14 @@
+<nav aria-label="children">
+    <ol class="breadcrumb my-0">
+        <li class="me-2">
+            <strong>分類: </strong>
+        </li>
+        {% for category in post.categories %}
+            <li class="breadcrumb-item">
+                <a href="/category/{{ category.slug }}">
+                    {{ category.title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ol>
+</nav>

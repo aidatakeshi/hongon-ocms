@@ -1,0 +1,8 @@
+{
+    "name": "hongon/hongon-theme",
+    "type": "october-theme",
+    "description": "Hongon",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}

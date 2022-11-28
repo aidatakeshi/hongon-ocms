@@ -1,0 +1,59 @@
+==
+<?php
+function onStart() {
+    $this['isLoggedIn'] = !!BackendAuth::getUser();
+}
+?>
+==
+<header class="my-header mb-2">
+    <h1>{{ post.title }}</h1>
+    {% if isLoggedIn %}
+        <a href="/-114514/tailor/entries/content_blog_post/{{ post.id }}" target="_blank">
+            <button class="btn btn-sm btn-outline-secondary">
+                Edit
+            </button>
+        </a>
+    {% endif %}
+</header>
+
+<div class="article-info-box mb-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            <li class="breadcrumb-item">
+                <a href="/">主頁</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <strong>{{ post.title }}</strong>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="article-info-box mb-2">
+    <small class="text-muted">
+        張貼於：{{ post.created_at|date("Y-m-d H:i") }}
+    </small>
+    {% if post.created_at != post.updated_at %}
+        <small class="text-muted">
+            更新於：{{ post.updated_at|date("Y-m-d H:i") }}
+        </small>
+    {% endif %}
+</div>
+
+<article class="my-content">
+    {% if post.entry_type == 'richtext' %}
+
+        {{ post.content|raw }}
+
+    {% elseif post.entry_type == 'markdown' %}
+
+        {{ post.content|md }}
+
+    {% endif %}
+</article>
+
+{% if post.categories|length > 0 %}
+    <div class="article-info-box mb-2">
+        {% partial 'blog/blog_categories' post=post %}
+    </div>
+{% endif %}

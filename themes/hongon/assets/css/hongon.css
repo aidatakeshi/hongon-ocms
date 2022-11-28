@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+HK:wght@200;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;400;700&display=swap');
+
+/* Default Font */
+body{
+    font-size: 14px;
+    font-family: 'Noto Serif HK', 'Noto Serif JP', serif;
+}
+
+/* Default layout: Background Color */
+@media only screen and (min-width: 992px) {
+    .layout-default{
+        background-image: url('../images/bg-gradient.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+}
+
+/* Custom Container */
+@media only screen and (max-width: 991px) {
+    .my-container, .my-footer {
+        padding: 12px 5px;
+    }
+    .my-container {
+        border-bottom: solid 2px #eee;
+        margin-top: 0;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+}
+@media only screen and (min-width: 992px) {
+    .my-container, .my-footer {
+        max-width: 980px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 12px 8px;
+    }
+    .my-container {
+        border: solid 2px #eee;
+        border-radius: 10px;
+        margin-top: 10px;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+        background-color: white;
+    }
+}
+
+/* Article Content */
+.my-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0fcff;
+    border-bottom: solid 2px #a3e0f7;
+    margin: 0 -5px;
+    padding: 0 5px;
+}
+.my-header a {
+    color: black;
+    text-decoration: none;
+}
+.my-header h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    padding: 0.2em 0;
+    margin: 0;
+}
+.my-content h2 {
+    background-color: #f0fcff;
+    padding: 0.2em;
+    font-size: 1.6rem;
+    margin-left: -5px;
+    margin-right: -5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.my-content h3{
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.my-content h4{
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.my-content h5, .my-content h6{
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.my-content img{
+    max-width: 100%;
+}
+
+.article-info-box{
+    background-color: #f8f8f8;
+    padding: 0.25rem 5px;
+}
+
+/* Button Width Handler */
+.btn-block{
+    width: 100%;
+}
+.btn-wide{
+    width: 100%;
+    max-width: 20rem;
+}

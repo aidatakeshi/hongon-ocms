@@ -1,0 +1,43 @@
+uuid: 339b11b7-69ad-43c4-9be1-6953e7738827
+handle: Content\Article
+type: structure
+name: Article
+drafts: true
+
+structure:
+    maxDepth: 0
+
+navigation:
+    icon: icon-wikipedia-w
+
+fields:
+    content:
+        type: repeater
+        displayMode: accordion
+        span: adaptive
+        groups:
+            header:
+                name: Header (H2)
+                icon: icon-header
+                fields:
+                    text:
+                        type: text
+            richtext:
+                name: Richtext
+                icon: icon-newspaper-o
+                fields:
+                    content:
+                        type: richeditor
+            markdown:
+                name: Markdown
+                icon: icon-newspaper-o
+                fields:
+                    content:
+                        type: markdown
+            html:
+                name: Raw HTML
+                icon: icon-html5
+                fields:
+                    content:
+                        type: codeeditor
+                        language: html

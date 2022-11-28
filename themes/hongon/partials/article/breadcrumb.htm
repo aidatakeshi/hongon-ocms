@@ -1,0 +1,21 @@
+{% macro render_breadcrumb(article) %}
+    {% if article.parent %}
+        {{ _self.render_breadcrumb(article.parent) }}
+        <li class="breadcrumb-item">
+            <a href="/a/{{ article.parent.slug }}">
+                {{ article.parent.title }}
+            </a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as nav %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb my-0">
+        {{ nav.render_breadcrumb(article) }}
+        <li class="breadcrumb-item active" aria-current="page">
+            <strong>{{ article.title }}</strong>
+        </li>
+    </ol>
+</nav>

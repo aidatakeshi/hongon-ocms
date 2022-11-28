@@ -1,0 +1,11 @@
+url = "/"
+layout = "default"
+title = "Main Page"
+==
+<?php
+function onInit(){
+    $this->page->title = "主頁";
+}
+?>
+==
+{% partial 'blog/blog_list' %}

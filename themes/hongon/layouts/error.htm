@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="{{ this.page.meta_description }}">
+        <meta name="title" content="{{ this.page.meta_title }}">
+
+        <link rel="icon" href="{{ 'assets/images/favicon.ico'|theme }}">
+        <link rel="stylesheet" href="{{ 'assets/css/app.css'|theme }}">
+
+        <title>{{ this.page.title }} - {{ this.site.name }}</title>
+    </head>
+    <body class="app layout-{{ this.layout.id }} page-{{ this.page.id }}">
+
+        <div class="min-vh-100 p-4 d-flex flex-column justify-content-center">
+            {% page %}
+        </div>
+
+    </body>
+
+</html>

@@ -1,0 +1,17 @@
+{% if section.type == 'header' %}
+
+    <h2>{{ section.text }}</h2>
+
+{% elseif section.type == 'richtext' %}
+
+    {{ section.content|raw }}
+
+{% elseif section.type == 'html' %}
+
+    {{ section.content|raw }}
+
+{% elseif section.type == 'markdown' %}
+
+    {{ section.content|md }}
+
+{% endif %}

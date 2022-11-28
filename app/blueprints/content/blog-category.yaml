@@ -1,0 +1,16 @@
+uuid: edcd102e-0525-4e4d-b07e-633ae6c143b6
+handle: Content\Blog\Category
+type: entry
+name: Blog Category
+drafts: false
+
+structure:
+    maxDepth: 1
+
+navigation:
+    icon: octo-icon-list-ul
+    order: 230
+
+fields:
+    description:
+        label: Description

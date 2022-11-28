@@ -1,0 +1,36 @@
+uuid: edcd102e-0525-4e4d-b07e-633ae6c18db6
+handle: Content\Blog\Post
+type: stream
+name: Blog Post
+drafts: true
+
+navigation:
+    icon: octo-icon-pencil
+    order: 200
+
+groups:
+    richtext:
+        name: Regular Post
+        fields:
+            content:
+                tab: Content
+                type: richeditor
+                span: adaptive
+            categories:
+                tab: Categories
+                commentAbove: 'Select categories the blog post belongs to'
+                type: entries
+                source: Content\Blog\Category
+
+    markdown:
+        name: Markdown Post
+        fields:
+            content:
+                tab: Content
+                type: markdown
+                span: adaptive
+            categories:
+                tab: Categories
+                commentAbove: 'Select categories the blog post belongs to'
+                type: entries
+                source: Content\Blog\Category

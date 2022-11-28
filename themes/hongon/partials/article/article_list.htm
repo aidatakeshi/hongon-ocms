@@ -1,0 +1,20 @@
+<nav aria-label="children">
+    {% if list_title is not empty %}
+        <strong>{{ list_title }}</strong>
+    {% endif %}
+    <ol class="breadcrumb my-0">
+        {% for article_item in articles %}
+            {% if article_item.slug == article_current.slug %}
+                <li class="breadcrumb-item active">
+                    {{ article_item.title }}
+                </li>
+            {% else %}
+                <li class="breadcrumb-item">
+                    <a href="/a/{{ article_item.slug }}">
+                        {{ article_item.title }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>

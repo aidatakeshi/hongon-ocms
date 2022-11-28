@@ -1,0 +1,12 @@
+name: Hongon
+description: Hongon
+author: Hongon
+homepage: ''
+authorCode: Hongon
+code: hongon
+parent: ''
+database: '0'
+previewImage: assets/images/theme-preview.png
+form: config/f.yaml
+require: config/r.yaml
+translate: config/t.yaml
