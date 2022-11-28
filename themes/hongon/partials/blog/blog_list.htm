@@ -37,13 +37,9 @@ function onStart() {
 
     <article class="my-content">
         {% if post.entry_type == 'richtext' %}
-
             {{ post.content|html_limit(500, '')|raw }}
-
         {% elseif post.entry_type == 'markdown' %}
-
             {{ post.content|html_limit(500, '')|md }}
-
         {% endif %}
     </article>
 
