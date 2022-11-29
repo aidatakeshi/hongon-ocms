@@ -1,0 +1,20 @@
+url = "/category/:slug"
+layout = "default"
+title = "Blog Category Page"
+meta_title = "{{ category.title }}"
+
+[section category]
+handle = "Blog\Category"
+entrySlug = "{{ :slug }}"
+==
+<?php
+function onInit(){
+    $this->page->title = "分類: ".$this->category->title;
+}
+?>
+==
+{% if category is empty %}
+    {% do abort(404) %}
+{% endif %}
+
+{% partial 'blog/blog_list' category=category %}

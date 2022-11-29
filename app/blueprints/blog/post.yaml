@@ -1,0 +1,47 @@
+uuid: edcd102e-0525-4e4d-b07e-633ae6c18db6
+handle: Blog\Post
+type: stream
+name: Blog Post
+drafts: true
+
+navigation:
+    icon: octo-icon-pencil
+    order: 200
+
+groups:
+    richtext:
+        name: Rich Text
+        fields:
+            content:
+                label: Content
+                tab: Content
+                type: richeditor
+                span: adaptive
+            _mixin:
+                type: mixin
+                source: Blog\Post\Mixin
+
+    markdown:
+        name: Mark Down
+        fields:
+            content:
+                label: Content
+                tab: Content
+                type: markdown
+                span: adaptive
+            _mixin:
+                type: mixin
+                source: Blog\Post\Mixin
+
+    html:
+        name: Raw HTML
+        fields:
+            content:
+                label: Content
+                tab: Content
+                type: codeeditor
+                language: html
+                span: adaptive
+            _mixin:
+                type: mixin
+                source: Blog\Post\Mixin

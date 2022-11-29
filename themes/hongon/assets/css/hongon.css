@@ -22,8 +22,10 @@ body{
         padding: 12px 5px;
     }
     .my-container {
-        border-bottom: solid 2px #eee;
+        border-bottom: solid 2px #ddd;
         margin-top: 0;
+    }
+    .my-container:last-child{
         box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
     }
 }
@@ -35,7 +37,7 @@ body{
         padding: 12px 8px;
     }
     .my-container {
-        border: solid 2px #eee;
+        border: solid 2px #ddd;
         border-radius: 10px;
         margin-top: 10px;
         box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
@@ -48,8 +50,8 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f0fcff;
-    border-bottom: solid 2px #a3e0f7;
+    background-color: #f0fcff; /*header_background_color*/
+    border-bottom: solid 2px #a3e0f7; /*header_bottom_line*/
     margin: 0 -5px;
     padding: 0 5px;
 }
@@ -64,13 +66,11 @@ body{
     margin: 0;
 }
 .my-content h2 {
-    background-color: #f0fcff;
-    padding: 0.2em;
+    background-color: #f0fcff; /*header_background_color*/
     font-size: 1.6rem;
     margin-left: -5px;
     margin-right: -5px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0.1em 5px;
 }
 .my-content h3{
     font-size: 1.4rem;
@@ -89,16 +89,11 @@ body{
     max-width: 100%;
 }
 
+.my-content p{
+    margin-bottom: 0.5em;
+}
+
 .article-info-box{
     background-color: #f8f8f8;
     padding: 0.25rem 5px;
-}
-
-/* Button Width Handler */
-.btn-block{
-    width: 100%;
-}
-.btn-wide{
-    width: 100%;
-    max-width: 20rem;
 }

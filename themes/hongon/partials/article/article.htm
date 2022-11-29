@@ -1,0 +1,74 @@
+[collection articles]
+handle = "Article"
+==
+<?php
+function onStart() {
+    $this['isLoggedIn'] = !!BackendAuth::getUser();
+}
+?>
+==
+<div class="my-container">
+
+    <header class="my-header mb-2">
+        <h1>{{ article.title }}</h1>
+        {% if isLoggedIn %}
+            <a href="/-114514/tailor/entries/article/{{ article.id }}" target="_blank">
+                <button class="btn btn-sm btn-outline-secondary">
+                    Edit
+                </button>
+            </a>
+        {% endif %}
+    </header>
+            
+    {% if article.parent %}
+        <div class="article-info-box mb-2">
+            {% partial 'article/breadcrumb' article=article %}
+        </div>
+    {% endif %}
+
+    <article class="my-content">
+        {# Main Content #}
+
+        <div>
+            {% if article.entry_type == 'markdown' %}
+                {{ article.content|md }}
+            {% else %}
+                {{ article.content|raw }}
+            {% endif %}
+        </div>
+
+    </article>
+            
+    {% if article.children|length > 0 %}
+        <div class="article-info-box mt-2">
+            {% partial 'article/article_list'
+                articles=article.children
+                article_current=article
+                list_title="子頁面: "
+            %}
+        </div>
+    {% endif %}
+
+    {% if article.parent is empty %}
+        <div class="article-info-box mt-2">
+            {% partial 'article/article_list'
+                articles=articles.whereNull('parent_id').get()
+                article_current=article
+                list_title="相關頁面: "
+            %}
+        </div>
+    {% elseif article.parent.children|length > 1 %}
+        <div class="article-info-box mt-2">
+            {% partial 'article/article_list'
+                articles=article.parent.children
+                article_current=article
+                list_title="相關頁面: "
+            %}
+        </div>
+    {% endif %}
+
+    <div class="article-info-box d-flex justify-content-end mt-2">
+        <small class="text-muted">最後更新於：{{ updated_at|date("Y-m-d H:i") }} (UTC)</small>
+    </div>
+    
+</div>

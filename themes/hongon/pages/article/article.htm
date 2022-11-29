@@ -4,7 +4,7 @@ title = "Article Display Page"
 meta_title = "{{ article.title }}"
 
 [section article]
-handle = "Content\Article"
+handle = "Article"
 entrySlug = "{{ :slug }}"
 ==
 <?php
@@ -18,56 +18,4 @@ function onStart() {
     {% do abort(404) %}
 {% endif %}
 
-<header class="my-header mb-2">
-    <h1>{{ article.title }}</h1>
-    {% if isLoggedIn %}
-        <a href="/-114514/tailor/entries/content_article/{{ article.id }}" target="_blank">
-            <button class="btn btn-sm btn-outline-secondary">
-                Edit
-            </button>
-        </a>
-    {% endif %}
-</header>
-        
-{% if article.parent %}
-    <div class="article-info-box mb-2">
-        {% partial 'article/breadcrumb' article=article %}
-    </div>
-{% endif %}
-
-<article class="my-content">
-    {# Main Content #}
-
-    <div>
-        {% for section in article.content %}
-        
-            {% partial 'article/section' section=section %}
-
-        {% endfor %}
-    </div>
-
-</article>
-        
-{% if article.children|length > 0 %}
-    <div class="article-info-box mt-2">
-        {% partial 'article/article_list'
-            articles=article.children
-            article_current=article
-            list_title="子頁面: "
-        %}
-    </div>
-{% endif %}
-
-{% if article.parent.children|length > 1 %}
-    <div class="article-info-box mt-2">
-        {% partial 'article/article_list'
-            articles=article.parent.children
-            article_current=article
-            list_title="相關頁面: "
-        %}
-    </div>
-{% endif %}
-
-<div class="article-info-box d-flex justify-content-end mt-2">
-    <small class="text-muted">最後更新於：{{ updated_at|date("Y-m-d H:i") }} (UTC)</small>
-</div>
+{% partial 'article/article' article=article %}

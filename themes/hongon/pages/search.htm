@@ -4,6 +4,7 @@ title = "Search Results"
 meta_title = "搜尋結果"
 ==
 <?php
+
 function onInit(){
     $this->page->title = "搜尋結果";
     $this->len_limit_before = 50;
@@ -18,8 +19,12 @@ function onStart(){
     if (!$keyword) return false;
 
     //Make Query on Articles
-    $articles = $this->getArticleItems($keyword);
-    foreach ($articles as $article) array_push($results, $article);
+    $items = $this->getItems($keyword, 'Article', '/a/');
+    foreach ($items as $item) array_push($results, $item);
+
+    //Make Query on Blog Posts
+    $items = $this->getItems($keyword, 'Blog\Post', '/b/');
+    foreach ($items as $item) array_push($results, $item);
 
     //Sort Results
     usort($results, function ($a, $b){
@@ -34,84 +39,71 @@ function onStart(){
     $this['results'] = array_slice($results, 0, $this->result_limit);
 }
 
-function getArticleItems($keyword){
-    $c = "xc_339b11b769ad43c49be16953e7738827c";
-    $r = "xc_339b11b769ad43c49be16953e7738827r";
-    $query = "
-        SELECT $c.title, $c.slug, $r.content_group, $r.content_value 
-        FROM $c, $r
-        WHERE $c.id = $r.host_id
-        AND ($c.title ILIKE :k OR $r.content_value ILIKE :k)
-        ORDER BY slug ASC
-    ";
-    $query_results = Db::select($query, ["k" => "%".$keyword."%"]);
+function getItems($keyword, $collection, $url_prefix){
 
-    //Check Each Article
-    $articles = [];
+    $results = Tailor\Models\EntryRecord::inSection($collection)
+    ->whereRaw("title ILIKE ? OR content ILIKE ?", ["%$keyword%", "%$keyword%"])->get();
+
+    //Check Each Item
+    $items = [];
     $prev_slug = null;
-    $keyword = strtolower($keyword);
-    foreach ($query_results as $i => $result){
+    $keyword = mb_strtolower($keyword);
+    foreach ($results as $i => $result){
 
-        //Add Article Matching Record
-        $score1 = 0;
-        $title_lower = strtolower($result->title);
-        if (strtolower($title_lower) === $keyword){
+        //Match Title
+        $title = mb_strtolower($result->title);
+        if (mb_strtolower($title) === $keyword){
             $score1 = 2;
-        }else if (substr_count($title_lower, $keyword)){
+        }else if (mb_substr_count($title, $keyword)){
             $score1 = 1;
+        }else{
+            $score1 = 0;
         }
-        if ($prev_slug !== $result->slug){
-            array_push($articles, [
+
+        //Match content
+        $content = strip_tags($result->content);
+        $content_l = mb_strtolower($content);
+        $score2 = mb_substr_count($content_l, $keyword);
+
+        if ($score2){
+            $strpos = mb_strpos($content_l, $keyword);
+            $len_before = $strpos;
+            $len_after = mb_strlen($content) - mb_strlen($keyword) - $strpos;
+            $truncate_before = max(0, $len_before - $this->len_limit_before);
+            $truncate_after = max(0, $len_after - $this->len_limit_after);
+            $new_length = mb_strlen($content) - $truncate_before - $truncate_after;
+            $prefix = $truncate_before ? '...' : '';
+            $suffix = $truncate_after ? '...' : '';
+            $content = $prefix . mb_substr($content, $truncate_before, $new_length) . $suffix;
+        }else{
+            $length_limit = $this->len_limit_before + $this->len_limit_after;
+            $suffix = (mb_strlen($content) > $length_limit) ? '...' : '';
+            $content = mb_substr($content, 0, $length_limit) . $suffix;
+        }
+
+        if ($score1 || $score2){
+            array_push($items, [
                 'title' => $result->title,
-                'slug' => $result->slug,
+                'url' => $url_prefix.$result->slug,
                 'score1' => $score1,
-                'score2' => 0,
-                'match' => "",
+                'score2' => $score2,
+                'content' => $content,
             ]);
         }
 
-        //Add Content Matching Record
-        $article_index = array_key_last($articles);
-        $content_value = json_decode($result->content_value);
-        if ($result->content_group == "header"){
-            //Header
-            $content = $content_value->text;
-        }else if ($result->content_group == "html" || $result->content_group == 'richtext'){
-            //HTML
-            $content = strip_tags($content_value->content);
-        }else if ($result->content_group == "markdown"){
-            //Markdown
-            $content = $content_value->content;
-        }
-        $articles[$article_index]['score2'] += (substr_count(strtolower($content), $keyword));
-
-        //Find First Matching
-        if (!$articles[$article_index]['match']){
-            $strpos = mb_strpos(strtolower($content), $keyword);
-            if ($strpos !== false){
-                $len_before = $strpos;
-                $len_after = mb_strlen($content) - mb_strlen($keyword) - $strpos;
-                $truncate_before = max(0, $len_before - $this->len_limit_before);
-                $truncate_after = max(0, $len_after - $this->len_limit_after);
-                $prefix = $truncate_before ? '...' : '';
-                $suffix = $truncate_after ? '...' : '';
-                $content = mb_substr($content, $truncate_before, mb_strlen($content) - $truncate_before - $truncate_after);
-                $articles[$article_index]['match'] = $prefix.$content.$suffix;
-            }
-        }
-
-        //Proceed
-        $prev_slug = $result->slug;
     }
-    return $articles;
+
+    return $items;
 }
 ?>
 ==
-<article class="my-content">
+<div class="my-container">
 
     {% if keyword is not empty %}
 
-        <h1>搜尋: {{ keyword }}</h1>
+        <div class="my-header">
+            <h1>搜尋: {{ keyword }}</h1>
+        </div>
 
         {% if results|length == 0 %}
             <div>沒有結果。</div>
@@ -121,10 +113,13 @@ function getArticleItems($keyword){
             <div class="card mt-2">
                 <div class="card-body py-2">
                     <strong>
-                        <a href="/a/{{ result.slug }}">{{ result.title }}</a>
+                        <a href="{{ result.url }}">{{ result.title }}</a>
                     </strong>
                     <div>
-                        {{ result.match }}
+                        <small class="text-muted">{{ result.url }}</small>
+                    </div>
+                    <div>
+                        {{ result.content }}
                     </div>
                 </div>
            </div>
@@ -145,4 +140,4 @@ function getArticleItems($keyword){
         </button>
     </form>
 
-</article>
+</div>

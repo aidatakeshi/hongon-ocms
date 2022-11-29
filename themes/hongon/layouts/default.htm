@@ -10,6 +10,7 @@ description = "Default layout"
 
         <link rel="icon" href="{{ 'assets/images/favicon.ico'|theme }}">
         <link rel="stylesheet" href="{{ 'assets/css/app.css'|theme }}">
+        <link rel="stylesheet" href="{{ 'assets/css/app_enhancement.css'|theme }}">
         <link rel="stylesheet" href="{{ 'assets/css/hongon.css'|theme }}">
         {% styles %}
 
@@ -24,7 +25,7 @@ description = "Default layout"
             </header>
 
             <main id="app-content" class="app-content" role="main">
-                {% partial 'app/content' %}
+                {% page %}
             </main>
 
             <footer id="app-footer" class="app-footer">

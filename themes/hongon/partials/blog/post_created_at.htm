@@ -1,0 +1,6 @@
+{% set c = post.created_at|date("Y-m-d H:i") %}
+{% set u = post.updated_at|date("Y-m-d H:i") %}
+<small class="text-muted">發表於：{{c}}</small>
+{% if c != u %}
+<small class="text-muted">更新於：{{u}}</small>
+{% endif %}

@@ -1,5 +1,5 @@
 [collection posts]
-handle = "Content\Blog\Post"
+handle = "Blog\Post"
 ==
 <?php
 function onStart() {
@@ -7,16 +7,25 @@ function onStart() {
 }
 ?>
 ==
-{% set posts_paginated = posts.orderBy('created_at', 'desc').paginate(5) %}
+{% if category is empty %}
+    {% set posts_paginated = posts.orderBy('created_at', 'desc').paginate(5) %}
+{% else %}
+    {% set posts_paginated = posts.whereRelation('categories', 'slug', category.slug).orderBy('created_at', 'desc').paginate(5) %}
+{% endif %}
+
+<div class="my-container">
+    {% partial 'blog/category_list' category_selected=category.slug %}
+</div>
 
 {% for post in posts_paginated %}
+<div class="my-container">
 
     <header class="my-header mb-2">
         <h1>
             <a href="/b/{{post.slug}}">{{ post.title }}</a>
         </h1>
         {% if isLoggedIn %}
-            <a href="/-114514/tailor/entries/content_blog_post/{{ post.id }}" target="_blank">
+            <a href="/-114514/tailor/entries/blog_post/{{ post.id }}" target="_blank">
                 <button class="btn btn-sm btn-outline-secondary">
                     Edit
                 </button>
@@ -25,14 +34,7 @@ function onStart() {
     </header>
 
     <div class="article-info-box mb-2">
-        <small class="text-muted">
-            張貼於：{{ post.created_at|date("Y-m-d H:i") }}
-        </small>
-        {% if post.created_at != post.updated_at %}
-            <small class="text-muted">
-                更新於：{{ post.updated_at|date("Y-m-d H:i") }}
-            </small>
-        {% endif %}
+        {% partial 'blog/post_created_at' post=post %}
     </div>
 
     <article class="my-content">
@@ -55,16 +57,18 @@ function onStart() {
 
     {% if post.categories|length > 0 %}
         <div class="article-info-box mb-2">
-            {% partial 'blog/blog_categories' post=post %}
+            {% partial 'blog/post_categories' post=post %}
         </div>
     {% endif %}
 
+</div>
 {% endfor %}
 
 <!-- Pagination -->
 {% if posts_paginated.render|length %}
-    <hr class="my-2" />
+<div class="my-container">
+    <nav class="d-flex justify-content-end">
+        {{ posts_paginated.render|replace({"pagination": "pagination mb-0"})|raw }}
+    </nav>
+</div>
 {% endif %}
-<nav class="d-flex justify-content-end">
-    {{ posts_paginated.render|replace({"pagination": "pagination mb-0"})|raw }}
-</nav>

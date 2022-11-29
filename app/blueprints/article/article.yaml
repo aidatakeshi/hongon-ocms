@@ -1,0 +1,49 @@
+uuid: 339b11b7-69ad-43c4-9be1-6953e7738827
+handle: Article
+type: structure
+name: Article
+drafts: true
+
+structure:
+    maxDepth: 0
+
+navigation:
+    icon: icon-wikipedia-w
+
+groups:
+    richtext:
+        name: Rich Text
+        fields:
+            content:
+                label: Content
+                tab: Content
+                type: richeditor
+                span: adaptive
+            _mixin:
+                type: mixin
+                source: Article\Mixin
+
+    markdown:
+        name: Mark Down
+        fields:
+            content:
+                label: Content
+                tab: Content
+                type: markdown
+                span: adaptive
+            _mixin:
+                type: mixin
+                source: Article\Mixin
+
+    html:
+        name: Raw HTML
+        fields:
+            content:
+                label: Content
+                tab: Content
+                type: codeeditor
+                language: html
+                span: adaptive
+            _mixin:
+                type: mixin
+                source: Article\Mixin

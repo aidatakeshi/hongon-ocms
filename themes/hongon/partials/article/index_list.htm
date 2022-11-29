@@ -1,0 +1,15 @@
+[collection articles]
+handle = "Article"
+==
+
+==
+{% set articles_root = articles.whereNull('parent_id').get() %}
+<div class="my-container">
+    <div class="d-flex flex-wrap mr-n1 mb-n1">
+        {% for article in articles_root %}
+            <a href="/a/{{article.slug}}" class="btn btn-light btn-sm me-1 mb-1" style="min-width: 7rem;">
+                {{article.title}}
+            </a>
+        {% endfor %}
+    </div>
+</div>
