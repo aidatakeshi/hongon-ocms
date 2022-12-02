@@ -45,8 +45,8 @@ body{
     }
 }
 
-/* Article Content */
-.my-header{
+/* Headers (In Container) */
+.my-container .my-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -55,45 +55,47 @@ body{
     margin: 0 -5px;
     padding: 0 5px;
 }
-.my-header a {
+.my-container .my-header a {
     color: black;
     text-decoration: none;
 }
-.my-header h1 {
+.my-container h1 {
     font-size: 1.8rem;
     font-weight: bold;
     padding: 0.2em 0;
     margin: 0;
 }
-.my-content h2 {
+.my-container h2 {
     background-color: #f0fcff; /*header_background_color*/
     font-size: 1.6rem;
     margin-left: -5px;
     margin-right: -5px;
     padding: 0.1em 5px;
 }
-.my-content h3{
+.my-container h3{
     font-size: 1.4rem;
     font-weight: bold;
 }
-.my-content h4{
+.my-container h4{
     font-size: 1.2rem;
     font-weight: bold;
 }
-.my-content h5, .my-content h6{
+.my-container h5, .my-container h6{
     font-size: 1rem;
     font-weight: bold;
 }
 
+/* Info Box */
+.article-info-box{
+    background-color: #f8f8f8;
+    padding: 0.25rem 5px;
+}
+
+/* Content */
 .my-content img{
     max-width: 100%;
 }
 
 .my-content p{
     margin-bottom: 0.5em;
-}
-
-.article-info-box{
-    background-color: #f8f8f8;
-    padding: 0.25rem 5px;
 }

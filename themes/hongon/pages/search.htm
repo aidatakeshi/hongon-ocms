@@ -112,9 +112,9 @@ function getItems($keyword, $collection, $url_prefix){
         {% for result in results %}
             <div class="card mt-2">
                 <div class="card-body py-2">
-                    <strong>
+                    <div class="lead">
                         <a href="{{ result.url }}">{{ result.title }}</a>
-                    </strong>
+                    </div>
                     <div>
                         <small class="text-muted">{{ result.url }}</small>
                     </div>
