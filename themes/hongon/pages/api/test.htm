@@ -1,0 +1,11 @@
+title = "api/test"
+url = "/api/test"
+==
+<?php
+function onStart(){
+    $token = substr(Request::header('Authorization'), 7);
+    $test = JWTAuth::authenticate($token);
+    return "test"; //response()->json($test);
+}
+?>
+==
