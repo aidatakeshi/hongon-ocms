@@ -28,4 +28,5 @@ nbproject
 /bootstrap/compiled.php
 /vendor
 /modules
-/plugins
+/plugins/*
+!/plugins/hongon

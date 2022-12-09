@@ -1,0 +1,6 @@
+plugin:
+    name: 'hongon.hongon::lang.plugin.name'
+    description: 'hongon.hongon::lang.plugin.description'
+    author: Hongon
+    icon: oc-icon-adjust
+    homepage: ''

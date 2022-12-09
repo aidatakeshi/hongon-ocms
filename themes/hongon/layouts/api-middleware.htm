@@ -1,0 +1,15 @@
+[viewBag]
+==
+<?php
+function onStart(){
+    if (!Request::isMethod('get')){
+        $token = substr(Request::header('Authorization'), 7);
+        try{
+            $test = JWTAuth::authenticate($token);
+        }catch(Exception $e){
+            return response()->json(["error" => "Invalid Token"], 401);
+        }
+    }
+}
+?>
+==

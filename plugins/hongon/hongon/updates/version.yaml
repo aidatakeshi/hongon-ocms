@@ -1,0 +1,35 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Created table hongon_hongon_operator_types'
+    - builder_table_create_hongon_hongon_operator_types.php
+1.0.3:
+    - 'Created table hongon_hongon_operators'
+    - builder_table_create_hongon_hongon_operators.php
+1.0.4:
+    - 'Updated table hongon_hongon_operator_types'
+    - builder_table_update_hongon_hongon_operator_types.php
+1.0.5:
+    - 'Created table hongon_hongon_line_types'
+    - builder_table_create_hongon_hongon_line_types.php
+1.0.6:
+    - 'Created table hongon_hongon_rail_lines'
+    - builder_table_create_hongon_hongon_rail_lines.php
+1.0.7:
+    - 'Updated table hongon_hongon_rail_lines'
+    - builder_table_update_hongon_hongon_lines.php
+1.0.8:
+    - 'Created table hongon_hongon_line_sections'
+    - builder_table_create_hongon_hongon_line_sections.php
+1.0.9:
+    - 'Created table hongon_hongon_regions_broader'
+    - builder_table_create_hongon_hongon_regions_broader.php
+1.0.10:
+    - 'Created table hongon_hongon_regions'
+    - builder_table_create_hongon_hongon_regions.php
+1.0.11:
+    - 'Created table hongon_hongon_stations'
+    - builder_table_create_hongon_hongon_stations.php
+1.0.12:
+    - 'Created table hongon_hongon_ref_images'
+    - builder_table_create_hongon_hongon_ref_images.php

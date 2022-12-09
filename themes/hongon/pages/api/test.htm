@@ -1,11 +1,12 @@
-title = "api/test"
 url = "/api/test"
+layout = "api-middleware"
+title = "api/test"
 ==
 <?php
 function onStart(){
-    $token = substr(Request::header('Authorization'), 7);
-    $test = JWTAuth::authenticate($token);
-    return "test"; //response()->json($test);
+
+    return response()->json("Hello");
+
 }
 ?>
 ==
