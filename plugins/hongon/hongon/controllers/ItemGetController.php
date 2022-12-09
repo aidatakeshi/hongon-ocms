@@ -8,22 +8,22 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
-class GeneralCRUDController extends Controller{
+class ItemGetController extends Controller{
     
     public function __construct(){
         parent::__construct();
     }
 
     /**
-     * [GET] api/hongon/{type}
+     * GET api/hongon/{type}
      * sort: according to $sortable, $sort_default in model class (starting with "-" means descending)
-     * {filter}: according to filters() in model class
+     * [filter]: according to filters() in model class
      * params: list of params for data display, comma separated
      * limit: no. of results per page
      * page: default is 1 (only when limit is set)
      * obj: if set, translate array to obj with id as attribute
      */
-    public function getItems(Request $request, $type){
+    public function getMultipleItems(Request $request, $type){
         
         //If class not found, 404
         $class = _Common::$class[$type] ?? null;
@@ -127,9 +127,36 @@ class GeneralCRUDController extends Controller{
     }
 
     /**
-     * [GET] api/hongon/{type}/{id}
+     * GET api/hongon/{type}/{id}
+     * params: list of params for data display, comma separated
      */
-    public function getItem(\Request $request, $type, $id){
+    public function getOneItem(Request $request, $type, $id, $is201 = false){
+        
+        //If class not found, 404
+        $class = _Common::$class[$type] ?? null;
+        if (!$class){
+            return response()->json(['error' => 'Invalid Type'], 404);
+        }
+
+        //If item not found, 404
+        $item = ($class)::where('id', $id)->where('deleted_at', null)->first();
+        if (!$item){
+            return response()->json(['error' => 'Item Not Found'], 404);
+        }
+        $item = $item->toArray();
+
+        //Call display($results, $params)
+        if ($params = $request->input('params')){
+            $params = explode(',', $params);
+            if (method_exists($class, 'display')){
+                $item = (($class)::display([$item], $params) ?? [$item])[0];
+            }
+        }
+
+        //Return Data
+        return response()->json([
+            'data' => $item,
+        ], $is201 ? 201 : 200);
         
     }
 

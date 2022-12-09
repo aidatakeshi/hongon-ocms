@@ -20,15 +20,15 @@ class Operator extends Model {
     ];
 
     //Data validations
-    public static $validations_update = [
-        'operator_type_id' => 'exists:hongon_hongon_operator_types,id',
-        'sort' => 'integer',
-    ];
     public static $validations_new = [
-        'operator_type_id' => 'exists:hongon_hongon_operator_types,id',
-        'sort' => 'integer',
         'name_chi' => 'required',
         'name_eng' => 'required',
+    ];
+    public static $validations_update = [
+        'name_chi' => 'filled',
+        'name_eng' => 'filled',
+        'operator_type_id' => 'exists:hongon_hongon_operator_types,id',
+        'sort' => 'integer',
     ];
 
     //Sorting & Filters
@@ -60,8 +60,7 @@ class Operator extends Model {
         }
         //operator-type
         if (in_array('operator-type', $params)){
-            $operator_types = OperatorType::where('deleted_at', null)
-                ->whereIn('id', _Common::getIDsFromResults($results, 'operator_type_id'))
+            $operator_types = OperatorType::whereIn('id', _Common::getIDsFromResults($results, 'operator_type_id'))
                 ->orderBy('sort', 'asc')->orderBy('name_eng', 'asc')->orderBy('name_chi', 'asc')
                 ->get()->toArray();
             $results = _Common::attachManyToOne($results, 'operator_type', $operator_types);

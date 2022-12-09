@@ -1,6 +1,20 @@
 <?php
 
-$namespace = "Hongon\\Hongon\\Controllers";
+Route::controller(Hongon\Hongon\Controllers\ItemGetController::class)->group(function () {
 
-Route::get('api/hongon/{type}', ['uses' => "$namespace\GeneralCRUDController@getItems"]);
-Route::get('api/hongon/{type}/{id}', ['uses' => "$namespace\GeneralCRUDController@getItem"]);
+    Route::get('api/hongon/{type}', 'getMultipleItems');
+    Route::get('api/hongon/{type}/{id}', 'getOneItem');
+
+});
+
+Route::controller(Hongon\Hongon\Controllers\ItemChangeController::class)
+->middleware('\Tymon\JWTAuth\Middleware\GetUserFromToken')->group(function () {
+
+    Route::post('api/hongon/{type}', 'newItem');
+    Route::post('api/hongon/{type}/{id}', 'duplicateItem');
+    Route::patch('api/hongon/{type}/{id}', 'updateItem');
+    Route::patch('api/hongon/{type}', 'updateItems');
+    Route::put('api/hongon/{type}', 'reorderItems');
+    Route::delete('api/hongon/{type}/{id}', 'removeItem');
+
+});

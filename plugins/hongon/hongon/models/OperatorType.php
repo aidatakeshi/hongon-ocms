@@ -20,17 +20,16 @@ class OperatorType extends Model {
     ];
 
     //Data validations
-    public static $validations_update = [
-        'sort' => 'integer',
-        'map_thickness' => 'integer',
-        'hide_below_logzoom' => 'numeric',
-    ];
     public static $validations_new = [
-        'sort' => 'integer',
-        'map_thickness' => 'integer',
-        'hide_below_logzoom' => 'numeric',
         'name_chi' => 'required',
         'name_eng' => 'required',
+    ];
+    public static $validations_update = [
+        'name_chi' => 'filled',
+        'name_eng' => 'filled',
+        'sort' => 'integer',
+        'map_thickness' => 'integer',
+        'hide_below_logzoom' => 'numeric',
     ];
     
     //Sorting & Filters
@@ -74,6 +73,10 @@ class OperatorType extends Model {
         }
         //Return results
         return $results;
+    }
+
+    public function onUpdated($request){
+        
     }
     
 }

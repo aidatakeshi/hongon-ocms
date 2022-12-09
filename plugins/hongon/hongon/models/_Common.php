@@ -38,7 +38,8 @@ class _Common{
         'boolean' => 'Boolean Required',
         'regex' => 'Invalid Format',
         'required' => 'Required',
-        'unique' => 'Should be Unique',
+        'filled' => 'Should Not Be Empty',
+        'unique' => 'Should Be Unique',
         
     ];
 
