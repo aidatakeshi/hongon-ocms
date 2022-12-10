@@ -5,10 +5,8 @@ namespace Hongon\Hongon\Controllers;
 use Backend\Classes\Controller;
 use Hongon\Hongon\Models\_Common;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Ramsey\Uuid\Uuid;
 
 use Hongon\Hongon\Controllers\ItemGetController;
 
@@ -16,34 +14,6 @@ class ItemChangeController extends Controller{
     
     public function __construct(){
         parent::__construct();
-    }
-
-    //Find Item
-    private function findItem($class, $id){
-        return ($class)::where('id', $id)->where('deleted_at', null)->first();
-    }
-
-    //Get Validation Errors
-    private function getValidationErrors($data, $class, $isNew = false){
-        if (!$isNew){
-            $rules = ($class)::$validations_update ?? [];
-        }else{
-            $rules = array_merge(($class)::$validations_new ?? [], ($class)::$validations_update ?? []);
-        }
-        $error_messages = _Common::$validation_error_messages;
-        $validator = Validator::make($data, $rules, $error_messages);
-        if ($validator->fails()){
-            return $validator->errors();
-        }
-        return null;
-    }
-
-    //Get New UUID
-    private function getNewUUID($class){
-        do{
-            $id = Uuid::uuid4();
-        }while(($class)::where('id', $id)->first());
-        return $id;
     }
 
     /**
@@ -55,24 +25,26 @@ class ItemChangeController extends Controller{
     public function newItem(Request $request, $type){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
+        $class = _Common::$classes[$type] ?? null;
         if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
 
         //Do validation, if failed, 400
-        $validation_errors = $this->getValidationErrors($request->all(), $class, $isNew = true);
+        $validation_errors = _Common::getValidationErrors($request->all(), $class, $isNew = true);
         if ($validation_errors){
             return response()->json(['error' => 'Validation Errors', 'details' => $validation_errors], 400);
         }
 
         //Prepare Data
         $data = $request->all();
+        $new_sort = _Common::getNewSortValue($class);
 
         //Proceed
         DB::beginTransaction();
         try{
             //Create new item
             $item = new $class;
-            $item->id = $this->getNewUUID($class);
+            $item->id = _Common::getNewUUID($class);
+            if ($new_sort !== null) $item->sort = $new_sort;
             $item->save();
             $item->update($data);
             //Call onCreated($request) on new item
@@ -104,27 +76,29 @@ class ItemChangeController extends Controller{
     public function duplicateItem(Request $request, $type, $id){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
+        $class = _Common::$classes[$type] ?? null;
         if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
         //If item not found, 404
-        $item = $this->findItem($class, $id);
+        $item = _Common::findItem($class, $id);
         if (!$item) return response()->json(['error' => 'Item Not Found'], 404);
 
         //Do validation, if failed, 400
-        $validation_errors = $this->getValidationErrors($request->all(), $class, $isNew = false);
+        $validation_errors = _Common::getValidationErrors($request->all(), $class, $isNew = false);
         if ($validation_errors){
             return response()->json(['error' => 'Validation Errors', 'details' => $validation_errors], 400);
         }
 
         //Prepare Data
         $data = array_merge($item, $request->all());
+        $new_sort = _Common::getNewSortValue($class);
 
         //Proceed
         DB::beginTransaction();
         try{
             //Create new item
             $item = new $class;
-            $item->id = $this->getNewUUID($class);
+            $item->id = _Common::getNewUUID($class);
+            if ($new_sort !== null) $item->sort = $new_sort;
             $item->save();
             $item->update($data);
             //Call onCreated($request) on new item
@@ -156,14 +130,14 @@ class ItemChangeController extends Controller{
     public function updateItem(Request $request, $type, $id){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
+        $class = _Common::$classes[$type] ?? null;
         if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
         //If item not found, 404
-        $item = $this->findItem($class, $id);
+        $item = _Common::findItem($class, $id);
         if (!$item) return response()->json(['error' => 'Item Not Found'], 404);
 
         //Do validation, if failed, 400
-        $validation_errors = $this->getValidationErrors($request->all(), $class, $isNew = false);
+        $validation_errors = _Common::getValidationErrors($request->all(), $class, $isNew = false);
         if ($validation_errors){
             return response()->json(['error' => 'Validation Errors', 'details' => $validation_errors], 400);
         }
@@ -207,7 +181,7 @@ class ItemChangeController extends Controller{
     public function updateItems(Request $request, $type){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
+        $class = _Common::$classes[$type] ?? null;
         if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
 
         //Validate "items" request
@@ -227,7 +201,7 @@ class ItemChangeController extends Controller{
         $items = [];
         foreach ($req_items as $i => $req_item){
             $id = $req_item['id'];
-            $item = $this->findItem($class, $id);
+            $item = _Common::findItem($class, $id);
             if (!$item) return response()->json(['error' => 'Item Not Found', 'index' => $i], 404);
             array_push($items, $item);
         }
@@ -236,7 +210,7 @@ class ItemChangeController extends Controller{
         $validation_errors_array = array_fill(0, count($req_items), null);
         $has_validation_errors = false;
         foreach ($req_items as $i => $req_item){
-            $validation_errors = $this->getValidationErrors($req_item, $class, $isNew = false);
+            $validation_errors = _Common::getValidationErrors($req_item, $class, $isNew = false);
             if ($validation_errors){
                 $validation_errors_array[$i] = $validation_errors;
                 $has_validation_errors = true;
@@ -282,29 +256,15 @@ class ItemChangeController extends Controller{
     }
 
     /**
-     * PUT api/hongon/{type}
-     * ids: IDs of items to be reordered, in array
-     */
-    public function reorderItems(Request $request, $type){
-        
-        //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
-        if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
-
-
-        
-    }
-
-    /**
      * DELETE api/hongon/{type}/{id}
      */
     public function removeItem(Request $request, $type, $id){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
+        $class = _Common::$classes[$type] ?? null;
         if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
         //If item not found, 404
-        $item = $this->findItem($class, $id);
+        $item = _Common::findItem($class, $id);
         if (!$item) return response()->json(['error' => 'Item Not Found'], 404);
         
         //If _get is set...
@@ -318,7 +278,7 @@ class ItemChangeController extends Controller{
         try{
             //Call onDeleted($request) on the item
             if (method_exists($class, 'onDeleted')){
-                $item->onDeleted();
+                $item->onDeleted($request);
             }
             //Make deletion
             $item->deleted_at = date('Y-m-d H:i:s');
@@ -338,6 +298,60 @@ class ItemChangeController extends Controller{
             return $get_response;
         }
         return response()->json((object)[]);
+        
+    }
+
+    /**
+     * PUT api/hongon/{type}
+     * ids: IDs of items to be reordered, in array
+     */
+    public function reorderItems(Request $request, $type){
+        
+        //If class not found, 404
+        $class = _Common::$classes[$type] ?? null;
+        if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
+
+        //If class not sortable, 400
+        if (!in_array('sort', ($class)::$sortable ?? [])){
+            return response()->json(['error' => 'Cannot Reorder'], 400);
+        }
+
+        //Validate "ids" request
+        $ids = $request->input('ids');
+        if (!is_array($ids)){
+            return response()->json(['error' => 'Invalid IDs'], 400);
+        }
+
+        //Get sort values. If any of the items not found, 404
+        $sort_values = [];
+        $items = [];
+        foreach ($ids as $i => $id){
+            $item = _Common::findItem($class, $id);
+            if (!$item) return response()->json(['error' => 'Item Not Found', 'index' => $i], 404);
+            array_push($items, $item);
+            array_push($sort_values, $item['sort']);
+        }
+
+        sort($sort_values);
+        $data = [];
+
+        //Reassign sort values
+        DB::beginTransaction();
+        try{
+            foreach ($items as $i => $item){
+                //Make updates
+                $items[$i]->sort = $sort_values[$i];
+                $items[$i]->save();
+                array_push($data, ['id' => $item['id'], 'sort' => $sort_values[$i]]);
+            }
+        }catch(\Exception $e){
+            DB::rollBack();
+            die();
+        }
+        DB::commit();
+
+        //End
+        return response()->json(['data' => $data]);
         
     }
 

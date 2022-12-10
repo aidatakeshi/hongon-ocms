@@ -75,7 +75,14 @@ class OperatorType extends Model {
         return $results;
     }
 
+    //CUD Handlers
+    public function onCreated($request){
+
+    }
     public function onUpdated($request){
+
+    }
+    public function onDeleted($request){
         
     }
     

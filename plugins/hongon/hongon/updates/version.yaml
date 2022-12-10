@@ -69,3 +69,6 @@
 1.0.24:
     - 'Updated table hongon_hongon_ref_images'
     - builder_table_update_hongon_hongon_ref_images_2.php
+1.0.25:
+    - 'Updated table hongon_hongon_line_sections'
+    - builder_table_update_hongon_hongon_line_sections.php

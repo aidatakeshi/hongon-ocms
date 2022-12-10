@@ -5,7 +5,6 @@ namespace Hongon\Hongon\Controllers;
 use Backend\Classes\Controller;
 use Hongon\Hongon\Models\_Common;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class ItemGetController extends Controller{
@@ -26,10 +25,8 @@ class ItemGetController extends Controller{
     public function getMultipleItems(Request $request, $type){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
-        if (!$class){
-            return response()->json(['error' => 'Invalid Type'], 404);
-        }
+        $class = _Common::$classes[$type] ?? null;
+        if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
 
         //Start to Build Query
         $query = ($class)::where('deleted_at', null);
@@ -133,19 +130,15 @@ class ItemGetController extends Controller{
     public function getOneItem(Request $request, $type, $id, $is201 = false){
         
         //If class not found, 404
-        $class = _Common::$class[$type] ?? null;
-        if (!$class){
-            return response()->json(['error' => 'Invalid Type'], 404);
-        }
+        $class = _Common::$classes[$type] ?? null;
+        if (!$class) return response()->json(['error' => 'Invalid Type'], 404);
 
         //If item not found, 404
-        $item = ($class)::where('id', $id)->where('deleted_at', null)->first();
-        if (!$item){
-            return response()->json(['error' => 'Item Not Found'], 404);
-        }
-        $item = $item->toArray();
+        $item = _Common::findItem($class, $id);
+        if (!$item) return response()->json(['error' => 'Item Not Found'], 404);
 
         //Call display($results, $params)
+        $item = $item->toArray();
         if ($params = $request->input('params')){
             $params = explode(',', $params);
             if (method_exists($class, 'display')){

@@ -1,8 +1,11 @@
 <?php namespace Hongon\Hongon\Models;
 
+use Illuminate\Support\Facades\Validator;
+use Ramsey\Uuid\Uuid;
+
 class _Common{
 
-    public static $class = [
+    public static $classes = [
 
         'ref-image' => \Hongon\Hongon\Models\RefImage::class,
 
@@ -43,7 +46,9 @@ class _Common{
         
     ];
 
-    //Shared functions
+    /**
+     * Shared functions for Modal Classes
+     */
     public static function keepOnlyAttributes($results, $keep_attributes, $inside_attribute = null){
         foreach ($results as $i => $result){
             if (!$inside_attribute){
@@ -104,6 +109,48 @@ class _Common{
             unset($results[$i][$parent_class_attr]);
         }
         return $results;
+    }
+
+    /**
+     * Shared functions for CRUD Controllers
+     */
+
+    //Find Item By Class, ID
+    public static function findItem($class, $id){
+        return ($class)::where('id', $id)->where('deleted_at', null)->first();
+    }
+
+    //Get Validation Errors
+    public static function getValidationErrors($data, $class, $isNew = false){
+        if (!$isNew){
+            $rules = ($class)::$validations_update ?? [];
+        }else{
+            $rules = array_merge(($class)::$validations_update ?? [], ($class)::$validations_new ?? []);
+        }
+        $error_messages = _Common::$validation_error_messages;
+        $validator = Validator::make($data, $rules, $error_messages);
+        if ($validator->fails()){
+            return $validator->errors();
+        }
+        return null;
+    }
+
+    //Get New UUID
+    public static function getNewUUID($class){
+        do{
+            $id = Uuid::uuid4();
+        }while(($class)::where('id', $id)->first());
+        return $id;
+    }
+
+    //Get New Sort Value
+    public static function getNewSortValue($class){
+        if (!in_array('sort', ($class)::$sortable ?? [])){
+            return null;
+        }
+        $item = ($class)::where('deleted_at', null)->orderBy('sort', 'desc')->first();
+        if (!$item) return 1;
+        return $item->sort + 1;
     }
 
 }
