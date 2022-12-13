@@ -17,7 +17,7 @@ class Line extends Model {
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
     protected $fillable = [
         'line_type_id', 'name_chi', 'name_eng', 'name_short_chi', 'name_short_eng',
-        'remarks', '_data',
+        'remarks',
     ];
     protected $casts = [
         '_data' => 'json',
@@ -160,6 +160,35 @@ class Line extends Model {
     }
     public function onDeleted($request){
         
+    }
+
+    //Update Data
+    public function updateLineData(){
+        $data = [
+            'length_km' => 0,
+            'x_min' => null,
+            'x_max' => null,
+            'y_min' => null,
+            'y_max' => null,
+            'operator_ids' => '',
+        ];
+        $x = [];
+        $y = [];
+        $line_sections = LineSection::where('deleted_at', null)->where('line_id', $this->id)->get();
+        foreach ($line_sections as $section){
+            $data['length_km'] += ($section->_data['length_km'] ?? 0);
+            if (($val = $section->_data['x_min'] ?? null) !== null) array_push($x, $val);
+            if (($val = $section->_data['x_max'] ?? null) !== null) array_push($x, $val);
+            if (($val = $section->_data['y_min'] ?? null) !== null) array_push($y, $val);
+            if (($val = $section->_data['y_max'] ?? null) !== null) array_push($y, $val);
+            $data['operator_ids'] .= '|' . $section->operator_id;
+        }
+        $data['x_min'] = min($x);
+        $data['x_max'] = max($x);
+        $data['y_min'] = min($y);
+        $data['y_max'] = max($y);
+        $this->_data = $data;
+        $this->save();
     }
 
 }

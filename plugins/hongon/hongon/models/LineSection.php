@@ -21,7 +21,7 @@ class LineSection extends Model {
         'name_chi', 'name_eng', 'name_short_chi', 'name_short_eng',
         'sort_in_line',
         'color', 'color_text', 'remarks', 'max_speed_kph',
-        'stations', '_data',
+        'stations',
     ];
     protected $casts = [
         'stations' => 'json',
@@ -151,13 +151,73 @@ class LineSection extends Model {
 
     //CUD Handlers
     public function onCreated($request){
-
+        $this->updateLineSectionData();
+        $this->updateLineData();
     }
     public function onUpdated($request){
-        
+        $this->updateLineSectionData();
+        $this->updateLineData();
     }
     public function onDeleted($request){
-        
+        $this->updateLineData();
+    }
+
+    //Update Data
+    public function updateLineSectionData(){
+        //Update station[i]._data
+        $stations = $this->stations;
+        foreach ($stations as $i => $station){
+            $segments = $station['segments'] ?? null;
+            if (is_array($segments)){
+                $x = [];
+                $y = [];
+                foreach ($segments as $segment){
+                    array_push($x, $segment['x']);
+                    array_push($y, $segment['y']);
+                }
+                $stations[$i]['_data'] = [
+                    'x_min' => count($x) ? min($x) : null,
+                    'x_max' => count($x) ? max($x) : null,
+                    'y_min' => count($y) ? min($y) : null,
+                    'y_max' => count($y) ? max($y) : null,
+                ];
+            }
+        }
+        $this->stations = $stations;
+
+        //Update _data
+        $data = [
+            'length_km' => null,
+            'x_min' => null, 'x_max' => null, 'y_min' => null, 'y_max' => null,
+            'station_id' => '',
+        ];
+        if (is_array($this->stations)){
+            if ($count = count($this->stations)){
+                $data['length_km'] = @$this->stations[$count - 1]['mileage_km'] ?? null;
+            }
+            $x = [];
+            $y = [];
+            foreach ($this->stations as $station){
+                $data['station_id'] .= '|' . $station['id'];
+                if (($val = @$station['_data']['x_min'] ?? null) !== null) array_push($x, $val);
+                if (($val = @$station['_data']['x_max'] ?? null) !== null) array_push($x, $val);
+                if (($val = @$station['_data']['y_min'] ?? null) !== null) array_push($y, $val);
+                if (($val = @$station['_data']['y_max'] ?? null) !== null) array_push($y, $val);
+            }
+            $data['x_min'] = count($x) ? min($x) : null;
+            $data['x_max'] = count($x) ? max($x) : null;
+            $data['y_min'] = count($y) ? min($y) : null;
+            $data['y_max'] = count($y) ? max($y) : null;
+        }
+        $this->_data = $data;
+        $this->save();
+    }
+
+    public function updateLineData(){
+        $line = Line::where('deleted_at', null)->where('id', $this->line_id)->first();
+        if ($line){
+            $line->updateLineData();
+        }
     }
     
 }
