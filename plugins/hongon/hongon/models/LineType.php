@@ -1,6 +1,7 @@
 <?php namespace Hongon\Hongon\Models;
 
 use Model;
+use Hongon\Hongon\Models\_Common;
 
 /**
  * Model
@@ -18,17 +19,41 @@ class LineType extends Model {
     ];
 
     //Data validations
-    public static $validations_update = [
-        'sort' => 'integer',
-        'map_thickness' => 'integer',
-        'hide_below_logzoom' => 'numeric',
-    ];
     public static $validations_new = [
-        'sort' => 'integer',
-        'map_thickness' => 'integer',
-        'hide_below_logzoom' => 'numeric',
         'name_chi' => 'required',
         'name_eng' => 'required',
     ];
+    public static $validations_update = [
+        'name_chi' => 'filled',
+        'name_eng' => 'filled',
+        'sort' => 'integer',
+        'map_thickness' => 'integer',
+        'hide_below_logzoom' => 'numeric',
+    ];
+
+    //Sorting & Filters
+    public static $sort_default = 'sort,name_eng,name_chi';
+    public static $sortable = ['sort', 'name_chi', 'name_eng'];
+
+    public static function filters($query, $param){
+        switch ($query){
+        }
+    }
+
+    //Display Manipulation
+    public static function display($results, $params){
+        return $results;
+    }
+
+    //CUD Handlers
+    public function onCreated($request){
+
+    }
+    public function onUpdated($request){
+        
+    }
+    public function onDeleted($request){
+        
+    }
 
 }

@@ -33,7 +33,7 @@ class Operator extends Model {
 
     //Sorting & Filters
     public static $sort_default = 'sort,name_eng,name_chi';
-    public static $sortable = ['sort', 'name_chi', 'name_eng'];
+    public static $sortable = ['sort', 'name_chi', 'name_eng','operator_type_id'];
 
     public static function filters($query, $param){
         switch ($query){
@@ -61,7 +61,6 @@ class Operator extends Model {
         //operator-type
         if (in_array('operator-type', $params)){
             $operator_types = OperatorType::whereIn('id', _Common::getIDsFromResults($results, 'operator_type_id'))
-                ->orderBy('sort', 'asc')->orderBy('name_eng', 'asc')->orderBy('name_chi', 'asc')
                 ->get()->toArray();
             $results = _Common::attachManyToOne($results, 'operator_type', $operator_types);
             //operator,selecter

@@ -49,34 +49,42 @@ class _Common{
     /**
      * Shared functions for Modal Classes
      */
-    public static function keepOnlyAttributes($results, $keep_attributes, $inside_attribute = null){
+    public static function keepOnlyAttributes($results, $keep_attributes, $inside_attr = null){
         foreach ($results as $i => $result){
-            if (!$inside_attribute){
+            if (!$inside_attr){
                 $results[$i] = self::keepOnlyAttributesForOne($result, $keep_attributes);
-            }else if (isset($result[$inside_attribute])){
-                $results[$i][$inside_attribute] = self::keepOnlyAttributesForOne($result[$inside_attribute], $keep_attributes);
+            }else if (isset($result[$inside_attr])){
+                $results[$i][$inside_attr] = self::keepOnlyAttributesForOne($result[$inside_attr], $keep_attributes);
             }
         }
         return $results;
     }
 
     public static function keepOnlyAttributesForOne($result, $keep_attributes){
-        $item = [];
-        if (isset($result['id'])){
-            $item['id'] = $result['id'];
-        }
-        foreach ($keep_attributes as $attr){
-            if (isset($result[$attr])){
-                $item[$attr] = $result[$attr];
+        foreach ($result as $attr => $val){
+            if (!in_array($attr, $keep_attributes) && $attr !== 'id'){
+                unset($result[$attr]);
             }
         }
-        return $item;
+        return $result;
     }
 
-    public static function getIDsFromResults($results, $attr = 'id'){
+    public static function getIDsFromResults($results, $id_attr = 'id', $inside_attr = null){
         $has_key = [];
-        foreach ($results as $result) $has_key[$result[$attr]] = true;
+        if (!$inside_attr){
+            foreach ($results as $result) $has_key[$result[$id_attr]] = true;
+        }else{
+            foreach ($results as $result) $has_key[$result[$inside_attr][$id_attr]] = true;
+        }
         return array_keys($has_key);
+    }
+
+    public static function resultArrayToObject($results){
+        $obj = [];
+        foreach ($results as $result){
+            $obj[$result['id']] = $result;
+        }
+        return $obj;
     }
 
     public static function attachOneToMany($results, $class_name, $sub_results, $sub_class_name){

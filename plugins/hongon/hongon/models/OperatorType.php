@@ -38,15 +38,6 @@ class OperatorType extends Model {
 
     public static function filters($query, $param){
         switch ($query){
-            case 'name_chi':
-                return ['query' => 'LOWER(name_chi) LIKE LOWER(?)', 'params' => ["%$param%"]];
-            case 'name_eng':
-                return ['query' => 'LOWER(name_eng) LIKE LOWER(?)', 'params' => ["%$param%"]];
-            case 'name':
-                return [
-                    'query' => 'LOWER(name_chi) LIKE LOWER(?) OR LOWER(name_eng) LIKE LOWER(?)',
-                    'params' => ["%$param%", "%$param%"]
-                ];
         }
     }
 
@@ -61,8 +52,7 @@ class OperatorType extends Model {
         if (in_array('operator', $params)){
             $operators = Operator::where('deleted_at', null)
             ->whereIn('operator_type_id', _Common::getIDsFromResults($results))
-                ->orderBy('sort', 'asc')->orderBy('name_eng', 'asc')->orderBy('name_chi', 'asc')
-                ->get()->toArray();
+                ->orderBy('sort', 'asc')->get()->toArray();
             $results = _Common::attachOneToMany($results, 'operator_type', $operators, 'operator');
             //operator,selecter
             if (in_array('selecter', $params)){

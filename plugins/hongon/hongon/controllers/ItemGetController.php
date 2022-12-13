@@ -96,9 +96,11 @@ class ItemGetController extends Controller{
         //Call display($results, $params)
         if ($params = $request->input('params')){
             $params = explode(',', $params);
-            if (method_exists($class, 'display')){
-                $results = ($class)::display($results, $params) ?? $results;
-            }
+        }else{
+            $params = [];
+        }
+        if (method_exists($class, 'display')){
+            $results = ($class)::display($results, $params) ?? $results;
         }
         
         //Handle "obj" param
@@ -141,9 +143,11 @@ class ItemGetController extends Controller{
         $item = $item->toArray();
         if ($params = $request->input('params')){
             $params = explode(',', $params);
-            if (method_exists($class, 'display')){
-                $item = (($class)::display([$item], $params) ?? [$item])[0];
-            }
+        }else{
+            $params = [];
+        }
+        if (method_exists($class, 'display')){
+            $item = (($class)::display([$item], $params) ?? [$item])[0];
         }
 
         //Return Data
