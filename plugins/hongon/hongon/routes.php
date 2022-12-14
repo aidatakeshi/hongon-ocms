@@ -1,5 +1,13 @@
 <?php
 
+//Special APIs
+Route::controller(Hongon\Hongon\Controllers\StationController::class)->group(function () {
+
+    Route::get('api/hongon/station--name-similar', 'getSimilarStationNames');
+
+});
+
+//General APIs
 Route::controller(Hongon\Hongon\Controllers\ItemGetController::class)->group(function () {
 
     Route::get('api/hongon/{type}', 'getMultipleItems');
