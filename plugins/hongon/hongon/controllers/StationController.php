@@ -17,7 +17,7 @@ class StationController extends Controller{
     }
 
     /**
-     * GET api/hongon/stations/name-similar
+     * GET api/hongon/station--name-similar
      * keyword: Name keyword
      * limit: Results limit (default 10)
      */
